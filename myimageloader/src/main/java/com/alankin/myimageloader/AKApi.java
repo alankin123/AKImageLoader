@@ -1,42 +1,31 @@
 package com.alankin.myimageloader;
 
+import android.content.Context;
 import android.support.annotation.DrawableRes;
-import android.widget.ImageView;
 
 /**
  * Created by alankin on 2017/1/21.
  */
 public class AKApi {
-    private String imgUrl;
-    @DrawableRes
-    private int erroPic;
-    @DrawableRes
-    private int defautPic;
+    private static AKApi instance;
+    private Context context;
 
-    private AKImageLoaderConfig akImageLoaderConfig;
-
-    public AKApi url(String url) {
-        imgUrl = url;
-        return this;
+    private AKApi(Context context) {
+        this.context = context;
     }
 
-    public AKApi erroPic(@DrawableRes int res) {
-        erroPic = res;
-        return this;
+    public static AKApi with(Context context) {
+        if (instance == null) {
+            synchronized (AKApi.class) {
+                if (instance == null) {
+                    instance = new AKApi(context);
+                }
+            }
+        }
+        return instance;
     }
 
-    public AKApi defautPic(@DrawableRes int res) {
-        defautPic = res;
-        return this;
-    }
-
-    public AKApi config(AKImageLoaderConfig Config) {
-        akImageLoaderConfig = Config;
-        return this;
-    }
-
-    public void Bind(ImageView View) {
-        /*imageView = View;
-        getInstance().loadImage(imgUrl, View, erroPic, defautPic);*/
+    public RequestCreater load(String url) {
+        return new RequestCreater(context, url);
     }
 }

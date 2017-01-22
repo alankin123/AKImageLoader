@@ -17,7 +17,7 @@ public class HttpCacheLoader implements CacheLoader{
     }
 
     @Override
-    public void save(Bitmap bitmap) {
+    public void save(String name,Bitmap bitmap) {
 
     }
 }

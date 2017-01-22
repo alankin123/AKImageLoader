@@ -11,5 +11,5 @@ public interface CacheLoader {
 
     boolean check(String path);
 
-    void save(Bitmap bitmap);
+    void save(String name, Bitmap bitmap);
 }
