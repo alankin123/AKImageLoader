@@ -7,9 +7,10 @@ import android.support.v4.util.LruCache;
  * Created by alankin on 2017/1/21.
  */
 public class LruCacheLoader implements CacheLoader {
-    private static volatile LruCache<String, Bitmap> bitmapLruCache;
+    private volatile LruCache<String, Bitmap> bitmapLruCache;
+    static LruCacheLoader instance;
 
-    public void CacheLoader() {
+    private LruCacheLoader() {
         if (bitmapLruCache == null) {
             int maxMemory = (int) Runtime.getRuntime().maxMemory();
             int lruSize = maxMemory / 8;
@@ -22,18 +23,29 @@ public class LruCacheLoader implements CacheLoader {
         }
     }
 
-    @Override
-    public Bitmap load(String path) {
-        return null;
+    public static LruCacheLoader getInstance() {
+        if (instance == null) {
+            synchronized (LruCacheLoader.class) {
+                if (instance == null) {
+                    instance = new LruCacheLoader();
+                }
+            }
+        }
+        return instance;
     }
 
     @Override
-    public boolean check(String path) {
-        return false;
+    public synchronized Bitmap load(String path) {
+        return bitmapLruCache.get(Utils.getName(path));
     }
 
     @Override
-    public synchronized void save(String name,Bitmap bitmap) {
+    public synchronized boolean check(String path) {
+        return bitmapLruCache.get(Utils.getName(path)) != null;
+    }
 
+    @Override
+    public synchronized void save(String name, Bitmap bitmap) {
+        bitmapLruCache.put(name, bitmap);
     }
 }
