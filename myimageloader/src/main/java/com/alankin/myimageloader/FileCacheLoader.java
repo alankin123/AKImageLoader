@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,7 +37,7 @@ public class FileCacheLoader implements CacheLoader {
     @Override
     public Bitmap load(String path) {
         Bitmap bitmap = null;
-        File file = new File(dirFile, Utils.getName(path));
+        File file = new File(dirFile, Utils.getWholeName(path));
         if (!file.exists()) {
             return bitmap;
         }
@@ -60,7 +58,7 @@ public class FileCacheLoader implements CacheLoader {
         File[] files = dirFile.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File file, String s) {
-                if (file.getName().equals(Utils.getName(path))) {
+                if (Utils.getName(file.getName()).equals(Utils.getName(Utils.getWholeName(path)))) {
                     return true;
                 }
                 return false;

@@ -36,12 +36,12 @@ public class LruCacheLoader implements CacheLoader {
 
     @Override
     public synchronized Bitmap load(String path) {
-        return bitmapLruCache.get(Utils.getName(path));
+        return bitmapLruCache.get(Utils.getWholeName(path));
     }
 
     @Override
     public synchronized boolean check(String path) {
-        return bitmapLruCache.get(Utils.getName(path)) != null;
+        return bitmapLruCache.get(Utils.getWholeName(path)) != null;
     }
 
     @Override

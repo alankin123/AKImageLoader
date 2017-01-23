@@ -1,7 +1,6 @@
 package com.alankin.myimageloader;
 
 import android.content.Context;
-import android.support.annotation.DrawableRes;
 
 /**
  * Created by alankin on 2017/1/21.

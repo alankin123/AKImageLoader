@@ -124,7 +124,7 @@ public class ReadyPool {
             @Override
             public void run() {
                 //这里是加载的主体逻辑
-                 AKImageLoader.load(finishHandler, ReadyPool.this.requestCreater);
+                AKImageLoader.load(finishHandler, ReadyPool.this.requestCreater);
             }
         };
         addTask(runnable);

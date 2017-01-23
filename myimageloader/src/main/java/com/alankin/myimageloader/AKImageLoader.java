@@ -14,7 +14,7 @@ public class AKImageLoader {
     public static void load(Handler finishHandle, RequestCreater requestCreater) {
         Bitmap bitmap;
         String imgUrl = requestCreater.imgUrl;
-        String name = Utils.getName(imgUrl);
+        String name = Utils.getWholeName(imgUrl);
         ImageView imageView = requestCreater.imageView;
         int erroPic = requestCreater.erroPic;
         int defautPic = requestCreater.defautPic;
@@ -22,13 +22,16 @@ public class AKImageLoader {
 
         BitmapDrawable defautDrawable = (BitmapDrawable) context.getResources().getDrawable(defautPic);
         bitmap = defautDrawable.getBitmap();
-        setImg2view(finishHandle, imageView, bitmap);
-        LruCacheLoader lruCacheLoader = new LruCacheLoader();
+        //复原未加载图片
+        imageView.setImageBitmap(bitmap);
+        //为ImageView设置tag防止多线程加载出现图片闪烁的问题。
+        imageView.setTag(imgUrl);
+        LruCacheLoader lruCacheLoader = LruCacheLoader.getInstance();
         //内存有缓存
         if (lruCacheLoader.check(imgUrl)) {
             bitmap = lruCacheLoader.load(imgUrl);
         } else {//内存没有缓存
-            FileCacheLoader fileCacheLoader = new FileCacheLoader();
+            FileCacheLoader fileCacheLoader = FileCacheLoader.getInstance();
             //文件有缓存
             if (fileCacheLoader.check(imgUrl)) {
                 bitmap = fileCacheLoader.load(imgUrl);
@@ -46,14 +49,19 @@ public class AKImageLoader {
                 }
             }
         }
-        setImg2view(finishHandle, imageView, bitmap);
+        setImg2view(finishHandle, requestCreater, bitmap);
     }
 
-    public static void setImg2view(Handler finishHandle, final ImageView imageView, final Bitmap bitmap) {
+    public static void setImg2view(Handler finishHandle, RequestCreater requestCreater, final Bitmap bitmap) {
+        final ImageView imageView = requestCreater.imageView;
+        final String imgUrl = requestCreater.imgUrl;
         finishHandle.post(new Runnable() {
             @Override
             public void run() {
-                imageView.setImageBitmap(bitmap);
+                String tag = (String) imageView.getTag();
+                if (tag.equals(imgUrl)) {
+                    imageView.setImageBitmap(bitmap);
+                }
             }
         });
     }
